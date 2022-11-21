@@ -13,13 +13,15 @@
 # $t4 = Ponteiro auxiliar
 
 .data
-	EntradaN:    .asciiz "Digite N: "
-	EntradaM: .asciiz "Digite M: "
-	Espaco:      .asciiz " "
+	EntradaN:	.asciiz "Digite N: "
+	EntradaM:	.asciiz "Digite M: "
+	Espaco:		.asciiz " "
+
 	.align 2
-	Entradas: .word 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+	Entradas:	.word 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+
 	.align 2
-	Saidas: .word
+	Saidas:		.word
 .text
 Main:
 	jal	MediaMovel
