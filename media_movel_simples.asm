@@ -23,6 +23,8 @@
 	.align 2
 	Saidas:		.word
 .text
+.globl Main
+
 Main:
 	jal	MediaMovel
 	j	Fim
