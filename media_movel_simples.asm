@@ -15,9 +15,9 @@
 	
 	Valor:		.asciiz "\nDigite um valor (0 para finalizar): "
 	
-	Espaco:		.asciiz "  "
+	Espaco:		.asciiz "	"
 	
-	MensFinal:	.asciiz "\nValor   M.M.Curta   M.M.Longa   Tendencia\n"
+	MensFinal:	.asciiz "\nValor		M.M.Curta	M.M.Longa	Tendencia\n"
 	
 	Constante:	.asciiz	"Constante\n"
 	
