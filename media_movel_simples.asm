@@ -235,7 +235,6 @@ LoopCompara:
 	
 	# Incrementando o contador
 	addi	$t2, $t2, 1
-	
 
 	# Mostrando o valor de Entradas na tela
     	mov.s	$f12, $f2
@@ -257,7 +256,7 @@ LoopCompara:
     	li      $v0, 4
     	syscall
  	
-	# Mostrando o valor da menor media movel na tela
+	# Mostrando o valor da maior media movel na tela
     	mov.s	$f12, $f1
     	li      $v0, 2
     	syscall
@@ -266,7 +265,6 @@ LoopCompara:
     	la      $a0, Espaco
     	li      $v0, 4
     	syscall
-
 
 	# Verifica se $f0 = $f1
 	c.eq.s	$f0, $f1
