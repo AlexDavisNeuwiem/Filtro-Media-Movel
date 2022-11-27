@@ -150,6 +150,7 @@ MediaMovel:
 	
 	# $f5 armazena N
 	mtc1	$s3, $f5
+	cvt.s.w $f5, $f5
 	
 CalculaMedia:
 	# Incrementando o contador
