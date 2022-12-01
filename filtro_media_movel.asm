@@ -13,11 +13,13 @@
 .data
 	N:		.asciiz "\nDigite N: "
 	
-	Valor:		.asciiz "\nDigite um valor (0 para finalizar): "
+	Valor01:	.asciiz "\nDigite o "
+	
+	Valor02:	.asciiz "º valor: "
 	
 	Espaco:		.asciiz "	"
 	
-	MensFinal:	.asciiz "\nValor		M.M.Curta	M.M.Longa	Tendencia\n"
+	MensFinal:	.asciiz "\nValor	Curta	Longa	Tendencia\n"
 	
 	Constante:	.asciiz	"Constante\n"
 	
@@ -26,13 +28,13 @@
 	Alta:		.asciiz	"Alta\n"
 	
 	.align 2
-	Entradas:	.float
+	Entradas:	.float 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
 	
 	.align 2
-	Saida01:	.float
+	Saida01:	.float 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
 	
 	.align 2
-	Saida02:	.float
+	Saida02:	.float 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
 
 .text
 .globl Main
@@ -83,8 +85,21 @@ Inicio:
 	
 LoopEntrada:
 	
+	# $s2 armazena a quantidade de valores de Entradas
+ 	addi	$s2, $s2, 1
+	
 	# Mostrando mensagem na tela
-    	la      $a0, Valor
+    	la      $a0, Valor01
+    	li      $v0, 4
+    	syscall
+    	
+    	# Mostrando $s2 na tela
+    	move	$a0, $s2
+    	li	$v0, 1
+    	syscall
+    	
+    	# Mostrando mensagem na tela
+    	la      $a0, Valor02
     	li      $v0, 4
     	syscall
  	
@@ -98,11 +113,11 @@ LoopEntrada:
 	# Se $f0 = $f1, entao vai para Continua
 	bc1t  	Continua
 	
+	# Se atingir a quantidade maxima de valores, vai para Continua
+	beq	$s2, 10, Continua
+	
 	# Armazena a entrada digitada em Entradas
 	s.s 	$f0, 0($t0)
- 	
- 	# $s2 armazena a quantidade de valores de Entradas
- 	addi	$s2, $s2, 1
  	
  	# Indo para o proximo valor de Entradas
  	addi	$t0, $t0, 4
@@ -112,6 +127,9 @@ LoopEntrada:
  Continua:
  	# Resetando $t0
  	li	$t0, 0
+ 	
+ 	# Subtraindo um valor de $s2
+ 	subi	$s2, $s2, 1
  	
  	# Retornando para Main
  	jr	$ra
@@ -132,6 +150,9 @@ MediaMovel:
 	# $s3 armazena N
  	move 	$s3, $v0
 
+	# $t6 = ponteiro auxiliar para Entradas
+	move	$t6, $s0
+	
 	# $t0 = ponteiro auxiliar para Entradas
 	move	$t0, $s0
 	
@@ -141,37 +162,50 @@ MediaMovel:
 	# $t2 = contador
 	li	$t2, 0
 	
-	# $f2 e $f3 comecam com 0
+	# $f2 comecam com 0
 	mtc1	$zero, $f2
-	mtc1	$zero, $f3
 	
 	# $f4 comeca com o primeiro valor de Entradas
 	l.s	$f4, 0($t0)
 	
+	# $f3 armazena um valor N posições  atraz de $f4
+	l.s	$f3, 0($t6)
+	
 	# $f5 armazena N
 	mtc1	$s3, $f5
 	cvt.s.w $f5, $f5
+	
+	# Registrador auxiliar para truncamento
+	li	$t8, 10000
+	mtc1	$t8, $f8
+	cvt.s.w	$f8, $f8
 	
 CalculaMedia:
 	# Incrementando o contador
  	addi	$t2, $t2, 1
  	
  	# $f6 armazena o somatorio dos valores de Entradas
- 	add.s	$f6, $f2, $f3
- 	add.s	$f6, $f6, $f4
+ 	add.s	$f2, $f2, $f4
  	
  	# $f7 armazena a media dos valores
- 	div.s	$f7, $f6, $f5
+ 	div.s	$f7, $f2, $f5
+ 	
+ 	# Truncando o resultado final
+ 	mul.s		$f7, $f7, $f8
+ 	trunc.w.s	$f7, $f7
+ 	cvt.s.w		$f7, $f7
+ 	div.s		$f7, $f7, $f8
  	
  	# Media armazenada na Saida
  	s.s	$f7, 0($t1)
  	
+ 	# Subtraindo $f3 de $f2
+ 	bge	$t2, $s3, Subtrai
+ 	
+Volta:
  	# Atualizando os valores
  	addi	$t0, $t0, 4
  	addi	$t1, $t1, 4
- 	
-	mov.s	$f2, $f3
-	mov.s	$f3, $f4
 	l.s	$f4, 0($t0)
 
 	# Quando $t2 for igual a $s2, deve-se parar de calcular
@@ -191,6 +225,13 @@ CalculaMedia:
 	
 	# Retornando para Main
  	jr	$ra
+
+Subtrai:
+	sub.s	$f2, $f2, $f3
+	addi	$t6, $t6, 4
+	l.s	$f3, 0($t6)
+	
+	j	Volta
 
 #-----------------------------------------------------------------------------------#
 
