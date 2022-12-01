@@ -113,23 +113,20 @@ LoopEntrada:
 	# Se $f0 = $f1, entao vai para Continua
 	bc1t  	Continua
 	
-	# Se atingir a quantidade maxima de valores, vai para Continua
-	beq	$s2, 10, Continua
-	
 	# Armazena a entrada digitada em Entradas
 	s.s 	$f0, 0($t0)
  	
  	# Indo para o proximo valor de Entradas
  	addi	$t0, $t0, 4
  	
+ 	# Se atingir a quantidade maxima de valores, vai para Continua
+	beq	$s2, 10, Continua
+ 	
  	j	LoopEntrada
  
  Continua:
  	# Resetando $t0
  	li	$t0, 0
- 	
- 	# Subtraindo um valor de $s2
- 	subi	$s2, $s2, 1
  	
  	# Retornando para Main
  	jr	$ra
@@ -203,18 +200,23 @@ CalculaMedia:
  	bge	$t2, $s3, Subtrai
  	
 Volta:
+	# Quando $t2 for igual a $s2, deve-se parar de calcular
+	beq	$t2, 10, AntesDeSair
+	
  	# Atualizando os valores
  	addi	$t0, $t0, 4
  	addi	$t1, $t1, 4
 	l.s	$f4, 0($t0)
 
-	# Quando $t2 for igual a $s2, deve-se parar de calcular
-	bne	$t2, $s2, CalculaMedia
-	
+	j	CalculaMedia
+
+AntesDeSair:
 	# Resetando todos os registradores utilizados no calculo
 	li	$t0, 0
 	li	$t1, 0
 	li	$t2, 0
+	li	$t6, 0
+	li	$t8, 0
 	
 	mtc1	$zero, $f2
 	mtc1	$zero, $f3
@@ -324,16 +326,15 @@ LoopCompara:
     	li      $v0, 4
     	syscall
     	
+    	# Se $t2 = $s2, deve-se parar de comparar valores
+	beq	$t2, 10, Sair
+    	
     	# Atualizando os valores
     	addi	$t0, $t0, 4
     	addi	$t1, $t1, 4
     	addi	$t3, $t3, 4
-	
-	# Se $t2 = $s2, deve-se parar de comparar valores
-	bne	$t2, $s2, LoopCompara
 
-	# Retornando para Main
- 	jr	$ra
+	j	LoopCompara
  	
 Igual:
 	# Mostrando constante na tela
@@ -341,16 +342,15 @@ Igual:
     	li      $v0, 4
     	syscall
     	
+    	# Se $t2 = $s2, deve-se parar de comparar valores
+	beq	$t2, 10, Sair
+    	
     	# Atualizando os valores
     	addi	$t0, $t0, 4
     	addi	$t1, $t1, 4
     	addi	$t3, $t3, 4
 
-	# Se $t2 = $s2, deve-se parar de comparar valores
-	bne	$t2, $s2, LoopCompara
-
-	# Retornando para Main
- 	jr	$ra
+	j	LoopCompara
 
 Menor:
 	# Mostrando queda na tela
@@ -358,15 +358,18 @@ Menor:
     	li      $v0, 4
     	syscall
     	
+    	# Se $t2 = $s2, deve-se parar de comparar valores
+	beq	$t2, 10, Sair
+    	
     	# Atualizando os valores
     	addi	$t0, $t0, 4
     	addi	$t1, $t1, 4
     	addi	$t3, $t3, 4
 
-	# Se $t2 = $s2, deve-se parar de comparar valores
-	bne	$t2, $s2, LoopCompara
-
-	# Retornando para Main
+	j	LoopCompara
+ 	
+ Sair:
+ 	# Retornando para Main
  	jr	$ra
 
 #-----------------------------------------------------------------------------------#
