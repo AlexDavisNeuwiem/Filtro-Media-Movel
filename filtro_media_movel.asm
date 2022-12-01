@@ -257,6 +257,9 @@ Compara:
 	move	$t0, $s4
 	move	$t1, $s5
 	
+	# Variavel auxiliar
+	mtc1	$zero, $f10
+	
 	j	LoopCompara
 
 SegundoMenor:
@@ -275,6 +278,12 @@ LoopCompara:
 	
 	# $f2 armazena valores de Entradas
 	l.s	$f2, 0($t3)
+	
+	# $f2 = $f10?
+	c.eq.s	$f2, $f10
+	
+	# Se $f2 = $f10, entao vai para Sair
+	bc1t  	Sair
 	
 	# Incrementando o contador
 	addi	$t2, $t2, 1
